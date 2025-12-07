@@ -1,0 +1,1059 @@
+/* ============================================
+   IoT DASHBOARD - MAIN STYLES
+   Karel SmartHub - PCB Defect Detection
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Color Palette - Karel Brand Theme */
+  --primary-bg: #ffffff;
+  --secondary-bg: #f8f9fa;
+  --tertiary-bg: #f0f2f5;
+  --accent-primary: #003da5;
+  --accent-danger: #e74c3c;
+  --accent-warning: #f39c12;
+  --accent-info: #0099ff;
+  --text-primary: #1a1a1a;
+  --text-secondary: #666666;
+  --border-color: #e0e0e0;
+  --success-color: #27ae60;
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #003da5, #0099ff);
+  --gradient-danger: linear-gradient(135deg, #e74c3c, #c0392b);
+  --gradient-warning: linear-gradient(135deg, #f39c12, #e67e22);
+  --gradient-info: linear-gradient(135deg, #0099ff, #003da5);
+  
+  /* Fonts */
+  --font-primary: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-primary);
+  background-color: var(--primary-bg);
+  color: var(--text-primary);
+  overflow-x: hidden;
+}
+
+/* ============================================
+   SCROLLBAR STYLING
+   ============================================ */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--secondary-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-info);
+}
+
+/* ============================================
+   IoT DASHBOARD LAYOUT
+   ============================================ */
+
+.iot-dashboard {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--primary-bg);
+  background-image: none;
+}
+
+.dashboard-container {
+  flex: 1;
+  padding: 20px;
+}
+
+.dashboard-content {
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* ============================================
+   HEADER STYLING
+   ============================================ */
+
+.iot-header {
+  background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+  border-bottom: 1px solid var(--border-color);
+  backdrop-filter: blur(10px);
+  padding: 20px 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1600px;
+  margin: 0 auto;
+  gap: 30px;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex: 1;
+}
+
+.brand-logo {
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--text-primary);
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.brand-logo img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.brand-info h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.brand-info p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 5px 0 0 0;
+}
+
+.header-status {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.system-health {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  background-color: rgba(39, 174, 96, 0.1);
+  border: 1px solid var(--success-color);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--success-color);
+}
+
+.system-health.unhealthy {
+  background-color: rgba(231, 76, 60, 0.1);
+  border-color: var(--accent-danger);
+  color: var(--accent-danger);
+}
+
+.health-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--success-color);
+  animation: pulse 2s infinite;
+}
+
+.system-health.unhealthy .health-indicator {
+  background-color: var(--accent-danger);
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 61, 165, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(0, 61, 165, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 61, 165, 0);
+  }
+}
+
+.connections-status {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.connection-count {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.connection-icons {
+  display: flex;
+  gap: 8px;
+}
+
+.icon-badge {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: rgba(0, 61, 165, 0.1);
+  border: 1.5px solid var(--accent-primary);
+  font-size: 16px;
+  cursor: help;
+  transition: all 0.3s ease;
+  color: var(--accent-primary);
+}
+
+.icon-badge.offline {
+  background-color: rgba(231, 76, 60, 0.1);
+  border-color: var(--accent-danger);
+  opacity: 0.5;
+  color: var(--accent-danger);
+}
+
+.icon-badge:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 10px rgba(0, 61, 165, 0.2);
+}
+
+.uptime-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+}
+
+.uptime-label {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.uptime-value {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-info));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ============================================
+   CARD STYLING
+   ============================================ */
+
+.camera-feed-card,
+.sensor-card,
+.defect-card,
+.stats-card,
+.system-card,
+.alert-panel-card {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(224, 224, 224, 0.6);
+  border-radius: 16px;
+  padding: 0;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(12px);
+}
+
+.camera-feed-card:hover,
+.sensor-card:hover,
+.defect-card:hover,
+.stats-card:hover,
+.system-card:hover,
+.alert-panel-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 61, 165, 0.12);
+  border-color: rgba(0, 61, 165, 0.3);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-color);
+  background: linear-gradient(90deg, rgba(0, 61, 165, 0.03) 0%, transparent 100%);
+}
+
+.card-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.alert-count {
+  background: var(--accent-danger);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.card-content {
+  padding: 20px;
+}
+
+/* ============================================
+   CAMERA FEED STYLING
+   ============================================ */
+
+.feed-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-color);
+  background: linear-gradient(90deg, rgba(0, 61, 165, 0.05) 0%, transparent 100%);
+}
+
+.header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.feed-title {
+  font-size: 17px;
+  font-weight: 700;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-primary);
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--accent-primary);
+  animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 8px var(--accent-primary);
+  }
+  50% {
+    opacity: 0.5;
+    box-shadow: 0 0 2px var(--accent-primary);
+  }
+}
+
+.feed-subtitle {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.timestamp {
+  font-size: 13px;
+  padding: 6px 12px;
+  background-color: rgba(0, 170, 255, 0.1);
+  border-radius: 6px;
+  border: 1px solid rgba(0, 170, 255, 0.3);
+  color: var(--accent-info);
+  font-weight: 600;
+}
+
+.feed-wrapper {
+  position: relative;
+  width: 100%;
+  padding-bottom: 75%;
+  background: #000;
+  overflow: hidden;
+}
+
+.feed-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.defect-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(231, 76, 60, 0.05);
+}
+
+.defect-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  background: rgba(231, 76, 60, 0.2);
+  border: 2px solid;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  animation: slideDown 0.5s ease;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.defect-pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--accent-danger);
+  animation: pulse 2s infinite;
+}
+
+.feed-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background: linear-gradient(90deg, rgba(0, 61, 165, 0.02) 0%, transparent 100%);
+  border-top: 1px solid var(--border-color);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.footer-info {
+  display: flex;
+  gap: 20px;
+}
+
+.frame-count,
+.frame-rate {
+  color: var(--text-secondary);
+}
+
+.defect-status {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.defect-details {
+  padding: 12px 20px;
+  background: rgba(231, 76, 60, 0.05);
+  border-top: 1px solid var(--border-color);
+  font-size: 12px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+}
+
+.detail-label {
+  color: var(--text-secondary);
+}
+
+.detail-value {
+  color: var(--accent-danger);
+  font-weight: 700;
+}
+
+/* ============================================
+   SENSOR MONITORING STYLING
+   ============================================ */
+
+.sensor-item {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.sensor-item:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.sensor-icon {
+  font-size: 24px;
+  min-width: 30px;
+  text-align: center;
+}
+
+.sensor-data {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sensor-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.sensor-value {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.sensor-bar {
+  height: 6px;
+  background-color: var(--border-color);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.sensor-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.sensor-status {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sensor-timestamp {
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+
+.qr-value {
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  color: var(--accent-info);
+}
+
+/* ============================================
+   DEFECT DETECTION STYLING
+   ============================================ */
+
+.defect-status-large {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.status-circle {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 3px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle, rgba(0, 61, 165, 0.1) 0%, transparent 70%);
+}
+
+.status-pulse {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: transparent;
+  border: 2px solid;
+  animation: expandPulse 2s infinite;
+  border-color: inherit;
+}
+
+@keyframes expandPulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}
+
+.status-text {
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.defect-detail {
+  margin: 16px 0;
+  padding: 12px 0;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.confidence-bar {
+  height: 8px;
+  background-color: var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 8px 0;
+}
+
+.confidence-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--accent-primary) 0%, var(--accent-info) 100%);
+  transition: width 0.3s ease;
+}
+
+.confidence-value {
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.defect-counter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: rgba(231, 76, 60, 0.05);
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+}
+
+.counter-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.counter-value {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--accent-danger);
+}
+
+.no-defect-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px 0;
+  text-align: center;
+  color: var(--accent-primary);
+  font-weight: 600;
+}
+
+.no-defect-message .secondary {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* ============================================
+   STATISTICS STYLING
+   ============================================ */
+
+.stat-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.stat-row:last-child {
+  border-bottom: none;
+}
+
+.stat-icon {
+  font-size: 24px;
+  min-width: 40px;
+  text-align: center;
+}
+
+.stat-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.stat-big {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* ============================================
+   SYSTEM STATUS STYLING
+   ============================================ */
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.status-item:last-child {
+  border-bottom: none;
+}
+
+.status-icon {
+  font-size: 24px;
+  min-width: 40px;
+  text-align: center;
+}
+
+.status-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.status-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.status-text {
+  color: var(--text-primary);
+}
+
+.uptime-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color);
+}
+
+/* ============================================
+   ALERT PANEL STYLING
+   ============================================ */
+
+.no-alerts {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--accent-primary);
+}
+
+.no-alerts-icon {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.no-alerts-text {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.alerts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 350px;
+  overflow-y: auto;
+}
+
+.alert-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(0, 61, 165, 0.04);
+  border-radius: 6px;
+  border-left: 3px solid;
+  transition: all 0.3s ease;
+}
+
+.alert-item:hover {
+  background: rgba(0, 61, 165, 0.08);
+}
+
+.alert-icon {
+  font-size: 20px;
+  min-width: 20px;
+}
+
+.alert-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.alert-message {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.alert-time {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+/* ============================================
+   STATISTICS DETAIL GRID
+   ============================================ */
+
+.stats-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.stat-detail-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(248, 249, 250, 0.8) 0%, rgba(255, 255, 255, 0.6) 100%);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.stat-detail-card:hover {
+  border-color: var(--accent-primary);
+  box-shadow: 0 8px 32px rgba(0, 61, 165, 0.15);
+  transform: translateY(-2px);
+}
+
+.stat-detail-card .stat-icon {
+  font-size: 32px;
+  min-width: 50px;
+}
+
+.stat-detail-card .stat-info {
+  flex: 1;
+}
+
+.stat-detail-card .stat-label {
+  display: block;
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.stat-detail-card .stat-value {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* ============================================
+   FOOTER STYLING
+   ============================================ */
+
+.iot-footer {
+  background: linear-gradient(180deg, rgba(248, 249, 250, 0.9) 0%, rgba(255, 255, 255, 0.95) 100%);
+  border-top: 2px solid var(--border-color);
+  padding: 20px;
+  text-align: center;
+  margin-top: 40px;
+}
+
+.footer-text {
+  font-size: 12px;
+  color: var(--text-secondary);
+  letter-spacing: 0.5px;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 1200px) {
+  .header-container {
+    gap: 20px;
+  }
+
+  .header-status {
+    gap: 20px;
+  }
+
+  .brand-info h1 {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .iot-header {
+    padding: 15px;
+  }
+
+  .header-container {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .header-brand {
+    gap: 12px;
+  }
+
+  .brand-logo {
+    font-size: 36px;
+  }
+
+  .brand-info h1 {
+    font-size: 20px;
+  }
+
+  .brand-info p {
+    font-size: 12px;
+  }
+
+  .header-status {
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+  }
+
+  .dashboard-container {
+    padding: 12px;
+  }
+
+  .stats-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-detail-card {
+    padding: 16px;
+  }
+
+  .card-content {
+    padding: 16px;
+  }
+
+  .feed-wrapper {
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  }
+}
+
+@media (max-width: 576px) {
+  .brand-logo {
+    font-size: 28px;
+  }
+
+  .brand-info h1 {
+    font-size: 18px;
+  }
+
+  .card-title {
+    font-size: 13px;
+  }
+
+  .sensor-value {
+    font-size: 16px;
+  }
+
+  .stat-big {
+    font-size: 18px;
+  }
+
+  .status-circle {
+    width: 80px;
+    height: 80px;
+  }
+
+  .connection-icons {
+    gap: 4px;
+  }
+
+  .icon-badge {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+}

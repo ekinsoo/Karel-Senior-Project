@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+*.log
+
+# Node.js / React
+node_modules/
+build/
+dist/
+.env
+.DS_Store
+
+# VS Code
+.vscode/
+
+# Static files generated during runtime
+static/latest.jpg

@@ -1,0 +1,53 @@
+import cv2, time, sys
+import paho.mqtt.client as mqtt
+
+# -------- settings --------
+BROKER = sys.argv[1] if len(sys.argv) > 1 else "localhost"
+PORT   = 1883
+TOPIC  = "jetson/camera/image/jpeg"
+CAM_INDEX = 0  # try 1 if you have an external webcam
+FPS = 2        # ~2 frames/sec for demo
+# --------------------------
+
+def open_cam():
+    # On macOS, AVFoundation is the reliable backend
+    cap = cv2.VideoCapture(CAM_INDEX, cv2.CAP_AVFOUNDATION)
+    if not cap.isOpened():
+        # fallback: generic backend
+        cap = cv2.VideoCapture(CAM_INDEX)
+    return cap
+
+client = mqtt.Client(client_id="mac-pub", clean_session=True)
+client.connect(BROKER, PORT, keepalive=30)
+client.loop_start()
+
+cap = open_cam()
+if not cap or not cap.isOpened():
+    raise RuntimeError("Could not open camera. Try CAM_INDEX=1 or grant Camera permission to your Terminal.")
+
+print(f"Publishing JPEG frames to {BROKER}:{PORT} topic '{TOPIC}' (Ctrl+C to stop)")
+try:
+    while True:
+        ok, frame = cap.read()
+        if not ok:
+            print("Frame grab failed; retrying…")
+            time.sleep(0.2)
+            continue
+
+        # Optional: overlay timestamp
+        ts = time.strftime("%Y-%m-%d %H:%M:%S")
+        cv2.putText(frame, ts, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0), 2)
+
+        ok, buf = cv2.imencode(".jpg", frame, [cv2.IMWRITE_JPEG_QUALITY, 80])
+        if not ok:
+            continue
+
+        client.publish(TOPIC, payload=buf.tobytes(), qos=1, retain=False)
+        time.sleep(1.0 / FPS)
+except KeyboardInterrupt:
+    pass
+finally:
+    cap.release()
+    client.loop_stop()
+    client.disconnect()
+    
