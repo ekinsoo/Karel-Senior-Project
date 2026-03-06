@@ -7,10 +7,12 @@ import DefectDetection from "./DefectDetection";
 import SystemStatus from "./SystemStatus";
 import Statistics from "./Statistics";
 import AlertPanel from "./AlertPanel";
+import QRScanner from "./QRScanner";
+import EnvironmentalPanel from "./EnvironmentalPanel";
 import "../styles/Dashboard.css";
 
 function Dashboard() {
-  const { cameraData, sensorData, defectionData, systemStatus, statistics, alerts } =
+  const { cameraData, sensorData, qrHistory, envData, envHistory, defectionData, systemStatus, statistics, alerts } =
     useContext(IoTContext);
 
   return (
@@ -26,6 +28,16 @@ function Dashboard() {
             </div>
             <div className="col-12 col-lg-4">
               <AlertPanel alerts={alerts} />
+            </div>
+          </div>
+
+          {/* Environmental + QR Scanner Row */}
+          <div className="row g-3 mb-4">
+            <div className="col-12 col-lg-6">
+              <EnvironmentalPanel envData={envData} envHistory={envHistory} />
+            </div>
+            <div className="col-12 col-lg-6">
+              <QRScanner qrHistory={qrHistory} sensorData={sensorData} />
             </div>
           </div>
 
@@ -50,39 +62,24 @@ function Dashboard() {
             <div className="col-12">
               <div className="stats-detail-grid">
                 <div className="stat-detail-card">
-                  <div className="stat-icon">📊</div>
-                  <div className="stat-info">
-                    <span className="stat-label">Total Inspected</span>
-                    <span className="stat-value">{statistics.totalInspected}</span>
-                  </div>
+                  <span className="stat-label">Total Inspected</span>
+                  <span className="stat-value">{statistics.totalInspected}</span>
                 </div>
                 <div className="stat-detail-card">
-                  <div className="stat-icon">⚠️</div>
-                  <div className="stat-info">
-                    <span className="stat-label">Defects Found</span>
-                    <span className="stat-value">{statistics.defectsFound}</span>
-                  </div>
+                  <span className="stat-label">Defects Found</span>
+                  <span className="stat-value">{statistics.defectsFound}</span>
                 </div>
                 <div className="stat-detail-card">
-                  <div className="stat-icon">📈</div>
-                  <div className="stat-info">
-                    <span className="stat-label">Defect Rate</span>
-                    <span className="stat-value">{statistics.defectRate}%</span>
-                  </div>
+                  <span className="stat-label">Defect Rate</span>
+                  <span className="stat-value">{statistics.defectRate}%</span>
                 </div>
                 <div className="stat-detail-card">
-                  <div className="stat-icon">⏱️</div>
-                  <div className="stat-info">
-                    <span className="stat-label">Avg Process Time</span>
-                    <span className="stat-value">{statistics.averageProcessTime}s</span>
-                  </div>
+                  <span className="stat-label">Avg Process Time</span>
+                  <span className="stat-value">{statistics.averageProcessTime}s</span>
                 </div>
                 <div className="stat-detail-card">
-                  <div className="stat-icon">🎯</div>
-                  <div className="stat-info">
-                    <span className="stat-label">Today's Defects</span>
-                    <span className="stat-value">{statistics.todayDefects}</span>
-                  </div>
+                  <span className="stat-label">Today's Defects</span>
+                  <span className="stat-value">{statistics.todayDefects}</span>
                 </div>
               </div>
             </div>

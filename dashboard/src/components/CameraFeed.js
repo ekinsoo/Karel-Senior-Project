@@ -2,9 +2,9 @@ import React from "react";
 
 function CameraFeed({ cameraData, defectionData }) {
   const getDefectColor = () => {
-    if (!defectionData.defectDetected) return "#00ff00";
-    if (defectionData.confidence > 80) return "#ff0000";
-    return "#ffaa00";
+    if (!defectionData.defectDetected) return "#47b881";
+    if (defectionData.confidence > 80) return "#d9534f";
+    return "#e8a838";
   };
 
   const getDefectLabel = () => {
@@ -47,7 +47,7 @@ function CameraFeed({ cameraData, defectionData }) {
           <div className="defect-overlay">
             <div className="defect-badge" style={{ borderColor: getDefectColor() }}>
               <span className="defect-pulse"></span>
-              <span className="defect-text">⚠️ DEFECT DETECTED</span>
+              <span className="defect-text">DEFECT DETECTED</span>
             </div>
           </div>
         )}
@@ -62,7 +62,7 @@ function CameraFeed({ cameraData, defectionData }) {
           <span
             className="defect-status"
             style={{
-              color: defectionData.defectDetected ? getDefectColor() : "#00ff00",
+              color: defectionData.defectDetected ? getDefectColor() : "#47b881",
             }}
           >
             {defectionData.defectDetected ? "● DEFECT" : "● OK"}

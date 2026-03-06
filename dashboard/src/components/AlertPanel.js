@@ -4,33 +4,20 @@ function AlertPanel({ alerts }) {
   const getSeverityColor = (severity) => {
     switch (severity) {
       case "high":
-        return "#ff3333";
+        return "#d9534f";
       case "medium":
-        return "#ffaa00";
+        return "#e8a838";
       case "low":
-        return "#00aaff";
+        return "#4a90d9";
       default:
-        return "#00ff00";
-    }
-  };
-
-  const getSeverityIcon = (severity) => {
-    switch (severity) {
-      case "high":
-        return "🔴";
-      case "medium":
-        return "🟠";
-      case "low":
-        return "🔵";
-      default:
-        return "🟢";
+        return "#47b881";
     }
   };
 
   return (
     <div className="alert-panel-card">
       <div className="card-header">
-        <h6 className="card-title">🚨 Alert History</h6>
+        <h6 className="card-title">Alert History</h6>
         <span className="alert-count">{alerts.length}</span>
       </div>
 
@@ -48,9 +35,7 @@ function AlertPanel({ alerts }) {
                 className="alert-item"
                 style={{ borderLeftColor: getSeverityColor(alert.severity) }}
               >
-                <div className="alert-icon">
-                  {getSeverityIcon(alert.severity)}
-                </div>
+
                 <div className="alert-content">
                   <p className="alert-message">{alert.message}</p>
                   <span className="alert-time">{alert.timestamp}</span>

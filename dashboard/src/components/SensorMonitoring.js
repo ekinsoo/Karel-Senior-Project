@@ -2,27 +2,32 @@ import React from "react";
 
 function SensorMonitoring({ sensorData }) {
   const getTempColor = () => {
-    if (sensorData.temperature === null) return "#999999";
-    switch (sensorData.temperatureStatus) {
-      case "critical":
-        return "#ff3333";
-      case "warning":
-        return "#ffaa00";
-      default:
-        return "#00ff00";
+    if (sensorData.temperature === null) return "#6b7280";
+    const t = sensorData.temperature;
+    if (t <= 25) return "#47b881";
+    if (t <= 30) {
+      const ratio = (t - 25) / 5;
+      const r = Math.round(0x47 + (0xe8 - 0x47) * ratio);
+      const g = Math.round(0xb8 + (0xa8 - 0xb8) * ratio);
+      const b = Math.round(0x81 + (0x38 - 0x81) * ratio);
+      return `rgb(${r},${g},${b})`;
     }
+    if (t <= 40) {
+      const ratio = (t - 30) / 10;
+      const r = Math.round(0xe8 + (0xd9 - 0xe8) * ratio);
+      const g = Math.round(0xa8 + (0x53 - 0xa8) * ratio);
+      const b = Math.round(0x38 + (0x4f - 0x38) * ratio);
+      return `rgb(${r},${g},${b})`;
+    }
+    return "#d9534f";
   };
 
   const getTempStatus = () => {
     if (sensorData.temperature === null) return "NO DATA";
-    switch (sensorData.temperatureStatus) {
-      case "critical":
-        return "CRITICAL";
-      case "warning":
-        return "WARNING";
-      default:
-        return "NORMAL";
-    }
+    const t = sensorData.temperature;
+    if (t > 35) return "CRITICAL";
+    if (t > 25) return "WARNING";
+    return "NORMAL";
   };
 
   const getTempDisplay = () => {
@@ -36,13 +41,12 @@ function SensorMonitoring({ sensorData }) {
   return (
     <div className="sensor-card">
       <div className="card-header">
-        <h6 className="card-title">📊 Sensors</h6>
+        <h6 className="card-title">Sensors</h6>
       </div>
 
       <div className="card-content">
         {/* Temperature Sensor */}
         <div className="sensor-item">
-          <div className="sensor-icon">🌡️</div>
           <div className="sensor-data">
             <span className="sensor-label">Temperature</span>
             <span className="sensor-value">{getTempDisplay()}</span>
@@ -65,7 +69,6 @@ function SensorMonitoring({ sensorData }) {
 
         {/* Humidity Sensor */}
         <div className="sensor-item">
-          <div className="sensor-icon">💧</div>
           <div className="sensor-data">
             <span className="sensor-label">Humidity</span>
             <span className="sensor-value">{getHumidityDisplay()}</span>
@@ -74,7 +77,7 @@ function SensorMonitoring({ sensorData }) {
                 className="sensor-bar-fill"
                 style={{
                   width: sensorData.humidity !== null ? `${sensorData.humidity}%` : "0%",
-                  backgroundColor: "#00aaff",
+                  backgroundColor: "#5bbfcf",
                 }}
               ></div>
             </div>
@@ -86,7 +89,6 @@ function SensorMonitoring({ sensorData }) {
 
         {/* QR Code */}
         <div className="sensor-item">
-          <div className="sensor-icon">📱</div>
           <div className="sensor-data">
             <span className="sensor-label">Last QR Code</span>
             <span className="sensor-value qr-value">{sensorData.qrCode}</span>

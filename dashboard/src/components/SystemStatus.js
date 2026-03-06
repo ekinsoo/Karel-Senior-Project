@@ -1,19 +1,18 @@
 import React from "react";
 
 function SystemStatus({ systemStatus }) {
-  const StatusItem = ({ icon, label, status }) => (
+  const StatusItem = ({ label, status }) => (
     <div className="status-item">
-      <span className="status-icon">{icon}</span>
       <div className="status-info">
         <span className="status-label">{label}</span>
         <div className="status-indicator">
           <span
             className="status-dot"
             style={{
-              backgroundColor: status ? "#00ff00" : "#ff3333",
+              backgroundColor: status ? "#47b881" : "#d9534f",
             }}
           ></span>
-          <span className="status-text">{status ? "Online" : "Offline"}</span>
+          <span style={{ color: status ? "#47b881" : "#d9534f" }}>{status ? "Online" : "Offline"}</span>
         </div>
       </div>
     </div>
@@ -22,17 +21,15 @@ function SystemStatus({ systemStatus }) {
   return (
     <div className="system-card">
       <div className="card-header">
-        <h6 className="card-title">🔧 System Status</h6>
+        <h6 className="card-title">System Status</h6>
       </div>
 
       <div className="card-content">
         <StatusItem
-          icon="⚙️"
           label="ESP32 Board"
           status={systemStatus.esp32Connected}
         />
         <StatusItem
-          icon="📷"
           label="Camera"
           status={systemStatus.cameraOnline}
         />

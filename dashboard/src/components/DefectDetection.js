@@ -3,10 +3,10 @@ import React from "react";
 function DefectDetection({ defectionData }) {
   const getStatusColor = () => {
     if (defectionData.defectDetected) {
-      if (defectionData.confidence > 80) return "#ff3333";
-      return "#ffaa00";
+      if (defectionData.confidence > 80) return "#d9534f";
+      return "#e8a838";
     }
-    return "#00ff00";
+    return "#47b881";
   };
 
   const getStatusLabel = () => {
@@ -20,7 +20,7 @@ function DefectDetection({ defectionData }) {
   return (
     <div className="defect-card">
       <div className="card-header">
-        <h6 className="card-title">⚠️ Defect Detection</h6>
+        <h6 className="card-title">Defect Detection</h6>
       </div>
 
       <div className="card-content">
