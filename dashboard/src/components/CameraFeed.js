@@ -1,6 +1,6 @@
 import React from "react";
 
-function CameraFeed({ cameraData, defectionData }) {
+function CameraFeed({ cameraData, defectionData, cameraMode, captureLoading, onModeSwitch, onCapture }) {
   const getDefectColor = () => {
     if (!defectionData.defectDetected) return "#47b881";
     if (defectionData.confidence > 80) return "#d9534f";
@@ -17,16 +17,34 @@ function CameraFeed({ cameraData, defectionData }) {
     return defectMap[defectionData.defectType] || "Unknown";
   };
 
+  const isLive = cameraMode === "live";
+
   return (
     <div className="camera-feed-card">
       <div className="feed-header">
         <div className="header-left">
           <h5 className="feed-title">
-            <span className="live-dot"></span> PCB Camera Feed
+            <span className={`live-dot ${isLive ? "" : "dot-capture"}`}></span>
+            {isLive ? "Live Feed" : "Capture Mode"}
           </h5>
-          <span className="feed-subtitle">IMX219-160 | 30 FPS | 3280x2464</span>
+          <span className="feed-subtitle">IMX219-160 | 1920×1080</span>
         </div>
         <div className="header-right">
+          {/* Mode Toggle */}
+          <div className="mode-toggle">
+            <button
+              className={`mode-btn ${isLive ? "mode-btn-active" : ""}`}
+              onClick={() => onModeSwitch("live")}
+            >
+              ● LIVE
+            </button>
+            <button
+              className={`mode-btn ${!isLive ? "mode-btn-active" : ""}`}
+              onClick={() => onModeSwitch("capture")}
+            >
+              ◎ CAPTURE
+            </button>
+          </div>
           <span className="timestamp">{cameraData.timestamp}</span>
         </div>
       </div>
@@ -42,6 +60,31 @@ function CameraFeed({ cameraData, defectionData }) {
           }}
         />
 
+        {/* Capture button overlay (only in capture mode) */}
+        {!isLive && (
+          <div className="capture-overlay">
+            <button
+              className={`capture-btn ${captureLoading ? "capture-btn-loading" : ""}`}
+              onClick={onCapture}
+              disabled={captureLoading}
+            >
+              {captureLoading ? (
+                <>
+                  <span className="capture-spinner"></span>
+                  Capturing...
+                </>
+              ) : (
+                <>📸 Capture Frame</>
+              )}
+            </button>
+          </div>
+        )}
+
+        {/* Mode badge */}
+        <div className={`mode-badge ${isLive ? "mode-badge-live" : "mode-badge-capture"}`}>
+          {isLive ? "● LIVE" : "◎ CAPTURE"}
+        </div>
+
         {/* Defect Overlay */}
         {defectionData.defectDetected && (
           <div className="defect-overlay">
@@ -56,7 +99,9 @@ function CameraFeed({ cameraData, defectionData }) {
       <div className="feed-footer">
         <div className="footer-info">
           <span className="frame-count">Frame #{cameraData.frameCount}</span>
-          <span className="frame-rate">30 FPS</span>
+          <span className="frame-rate">
+            {isLive ? "LIVE STREAM" : "ON-DEMAND"}
+          </span>
         </div>
         <div className="defect-info">
           <span

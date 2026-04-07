@@ -2,9 +2,14 @@ import React, { createContext, useState, useEffect } from "react";
 
 export const IoTContext = createContext();
 
+// Dynamically resolve the API server — works whether the dashboard is
+// opened on the Jetson itself (localhost) or from another machine on
+// the local network (uses the Jetson's actual IP automatically).
+const API_BASE = `http://${window.location.hostname}:8000`;
+
 export const IoTDataProvider = ({ children }) => {
   const [cameraData, setCameraData] = useState({
-    imageSrc: "http://localhost:8000/api/latest-image",
+    imageSrc: `${API_BASE}/api/latest-image`,
     timestamp: "-",
     frameCount: 0,
     fps: 0,
@@ -55,25 +60,74 @@ export const IoTDataProvider = ({ children }) => {
 
   const [alerts, setAlerts] = useState([]);
 
-  // Fetch camera image with cache busting
+  // ── Camera mode state ───────────────────────────────────────────────────
+  const [cameraMode, setCameraMode] = useState("live"); // "live" | "capture"
+  const [captureLoading, setCaptureLoading] = useState(false);
+
+  // Switch mode on the backend → Jetson
+  const switchCameraMode = async (mode) => {
+    try {
+      const res = await fetch(`${API_BASE}/api/camera/mode`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mode }),
+      });
+      const data = await res.json();
+      setCameraMode(data.mode);
+    } catch (err) {
+      console.error("Mode switch failed", err);
+    }
+  };
+
+  // Request a single high-quality capture
+  const triggerCapture = async () => {
+    setCaptureLoading(true);
+    try {
+      await fetch(`${API_BASE}/api/camera/capture`, { method: "POST" });
+      // Wait a moment for the frame to arrive, then refresh the image
+      setTimeout(() => {
+        setCameraData((prev) => ({
+          ...prev,
+          imageSrc: `${API_BASE}/api/latest-image?ts=${Date.now()}`,
+          timestamp: new Date().toLocaleTimeString(),
+        }));
+        setCaptureLoading(false);
+      }, 1500);
+    } catch (err) {
+      console.error("Capture failed", err);
+      setCaptureLoading(false);
+    }
+  };
+
+  // Sync mode from server on load
   useEffect(() => {
+    fetch(`${API_BASE}/api/camera/mode`)
+      .then((r) => r.json())
+      .then((d) => setCameraMode(d.mode))
+      .catch(() => {});
+  }, []);
+
+  // Fetch camera image with cache busting (only in live mode)
+  useEffect(() => {
+    if (cameraMode !== "live") return; // no polling in capture mode
+
     const imageInterval = setInterval(() => {
       setCameraData((prev) => ({
         ...prev,
-        imageSrc: `http://localhost:8000/api/latest-image?ts=${Date.now()}`,
+        imageSrc: `${API_BASE}/api/latest-image?ts=${Date.now()}`,
         timestamp: new Date().toLocaleTimeString(),
       }));
     }, 2000); // Update every 2 seconds
 
     return () => clearInterval(imageInterval);
-  }, []);
+  }, [cameraMode]);
 
   // Poll QR decode results from backend
   useEffect(() => {
     const qrInterval = setInterval(async () => {
       try {
         // Latest QR result → update sensorData
-        const latestRes = await fetch("http://localhost:8000/api/qr-latest");
+        const latestRes = await fetch(`${API_BASE}/api/qr-latest`);
         const latest = await latestRes.json();
         if (latest.data) {
           setSensorData((prev) => ({
@@ -84,7 +138,7 @@ export const IoTDataProvider = ({ children }) => {
         }
 
         // QR history → update qrHistory state
-        const histRes = await fetch("http://localhost:8000/api/qr-history");
+        const histRes = await fetch(`${API_BASE}/api/qr-history`);
         const hist = await histRes.json();
         setQrHistory(hist);
       } catch (err) {
@@ -99,7 +153,7 @@ export const IoTDataProvider = ({ children }) => {
   useEffect(() => {
     const envInterval = setInterval(async () => {
       try {
-        const latestRes = await fetch("http://localhost:8000/api/env/latest");
+        const latestRes = await fetch(`${API_BASE}/api/env/latest`);
         const latest = await latestRes.json();
         if (latest.temp_c !== undefined) {
           setEnvData(latest);
@@ -115,7 +169,7 @@ export const IoTDataProvider = ({ children }) => {
           setSystemStatus((prev) => ({ ...prev, esp32Connected: true }));
         }
 
-        const histRes = await fetch("http://localhost:8000/api/env/history");
+        const histRes = await fetch(`${API_BASE}/api/env/history`);
         const hist = await histRes.json();
         if (Array.isArray(hist)) {
           setEnvHistory(hist);
@@ -138,6 +192,10 @@ export const IoTDataProvider = ({ children }) => {
     systemStatus,
     statistics,
     alerts,
+    cameraMode,
+    captureLoading,
+    switchCameraMode,
+    triggerCapture,
     setSensorData,
     setDefectionData,
     setSystemStatus,

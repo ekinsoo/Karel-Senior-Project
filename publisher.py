@@ -10,11 +10,15 @@ FPS = 2        # ~2 frames/sec for demo
 # --------------------------
 
 def open_cam():
-    # On macOS, AVFoundation is the reliable backend
-    cap = cv2.VideoCapture(CAM_INDEX, cv2.CAP_AVFOUNDATION)
+    gst = (
+        "nvarguscamerasrc ! "
+        "video/x-raw(memory:NVMM), width=1280, height=720, framerate=30/1 ! "
+        "nvvidconv ! video/x-raw, format=BGRx ! "
+        "videoconvert ! video/x-raw, format=BGR ! appsink"
+    )
+    cap = cv2.VideoCapture(gst, cv2.CAP_GSTREAMER)
     if not cap.isOpened():
-        # fallback: generic backend
-        cap = cv2.VideoCapture(CAM_INDEX)
+        cap = cv2.VideoCapture(0)
     return cap
 
 client = mqtt.Client(client_id="mac-pub", clean_session=True)
@@ -50,4 +54,4 @@ finally:
     cap.release()
     client.loop_stop()
     client.disconnect()
-    
+        

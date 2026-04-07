@@ -173,7 +173,7 @@ def _save_debug(img: np.ndarray, result: QRResult, path: str):
 # ── CLI entry point ──────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    INPUT = "qr_test_images/test3.jpg"
+    INPUT = "qr_test_images/test_pcb.jpg"
     DEBUG = "debug_qr.png"
 
     res = decode_image(INPUT, debug_path=DEBUG)

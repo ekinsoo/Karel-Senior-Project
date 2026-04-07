@@ -12,7 +12,7 @@ import EnvironmentalPanel from "./EnvironmentalPanel";
 import "../styles/Dashboard.css";
 
 function Dashboard() {
-  const { cameraData, sensorData, qrHistory, envData, envHistory, defectionData, systemStatus, statistics, alerts } =
+  const { cameraData, sensorData, qrHistory, envData, envHistory, defectionData, systemStatus, statistics, alerts, cameraMode, captureLoading, switchCameraMode, triggerCapture } =
     useContext(IoTContext);
 
   return (
@@ -24,7 +24,14 @@ function Dashboard() {
           {/* Top Row: Camera Feed & Alerts */}
           <div className="row g-3 mb-4">
             <div className="col-12 col-lg-8">
-              <CameraFeed cameraData={cameraData} defectionData={defectionData} />
+              <CameraFeed
+                cameraData={cameraData}
+                defectionData={defectionData}
+                cameraMode={cameraMode}
+                captureLoading={captureLoading}
+                onModeSwitch={switchCameraMode}
+                onCapture={triggerCapture}
+              />
             </div>
             <div className="col-12 col-lg-4">
               <AlertPanel alerts={alerts} />

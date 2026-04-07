@@ -2,7 +2,7 @@
 qr_fast – Fastest-path decoders (Tier 0 + Tier 1).
 
 Tier 0: OpenCV QRCodeDetector + pyzbar on a downscaled image (~5 ms).
-Tier 1: Overlapping 2×2 quadrant tiles → pylibdmtx        (~15 ms per tile).
+Tier 1: Overlapping 2×2 quadrant tiles → DataMatrix decoders.
 """
 
 from __future__ import annotations
@@ -18,10 +18,22 @@ except ImportError:
     HAS_PYZBAR = False
 
 try:
-    from pylibdmtx import pylibdmtx
-    HAS_DMTX = True
-except ImportError:
-    HAS_DMTX = False
+    import pylibdmtx.pylibdmtx as pylibdmtx
+    HAS_PYLIBDMTX = True
+except Exception as e:
+    print("pylibdmtx import error:", repr(e))
+    HAS_PYLIBDMTX = False
+
+try:
+    import zxingcpp
+    HAS_ZXING = True
+except Exception as e:
+    print("zxingcpp import error:", repr(e))
+    HAS_ZXING = False
+
+# Backward-compatible public flag name.
+HAS_DMTX = HAS_PYLIBDMTX
+HAS_DM_DECODER = HAS_PYLIBDMTX or HAS_ZXING
 
 
 # ── Settings ─────────────────────────────────────────────────────────────────
@@ -68,27 +80,58 @@ def try_pyzbar(img: np.ndarray):
 
 
 def try_dmtx(img: np.ndarray, timeout_ms: int = DMTX_TILE_TIMEOUT):
-    """pylibdmtx — the only option for DataMatrix.  SLOW on large images."""
-    if not HAS_DMTX:
+    """Try DataMatrix decoders (pylibdmtx first, then zxing-cpp)."""
+    if not HAS_DM_DECODER:
         return None, None, None
+
     gray = _gray(img)
-    try:
-        results = pylibdmtx.decode(gray, timeout=timeout_ms, max_count=1)
-        if results:
-            obj = results[0]
-            data = obj.data.decode("utf-8", errors="replace")
-            x, y_bot, w, h = obj.rect
-            img_h = gray.shape[0]
-            y_top = img_h - y_bot           # bottom-left → top-left origin
-            pts = np.array([
-                [x,     y_top],
-                [x + w, y_top],
-                [x + w, y_top + abs(h)],
-                [x,     y_top + abs(h)],
-            ], dtype=np.float32)
-            return data, pts, "DATAMATRIX"
-    except Exception:
-        pass
+    if HAS_PYLIBDMTX:
+        try:
+            results = pylibdmtx.decode(gray, timeout=timeout_ms, max_count=1)
+            if results:
+                obj = results[0]
+                data = obj.data.decode("utf-8", errors="replace")
+                x, y, w, h = obj.rect
+
+                pts = np.array([
+                    [x,     y],
+                    [x + w, y],
+                    [x + w, y + h],
+                    [x,     y + h],
+                ], dtype=np.float32)
+
+                return data, pts, "DATAMATRIX"
+        except Exception as e:
+            print("try_dmtx pylibdmtx error:", repr(e))
+
+    if HAS_ZXING:
+        try:
+            # zxing-cpp can decode difficult low-contrast laser DataMatrix cases.
+            for binarizer in (
+                zxingcpp.Binarizer.LocalAverage,
+                zxingcpp.Binarizer.GlobalHistogram,
+            ):
+                results = zxingcpp.read_barcodes(
+                    gray,
+                    formats=zxingcpp.BarcodeFormat.DataMatrix,
+                    try_rotate=True,
+                    try_downscale=True,
+                    try_invert=True,
+                    binarizer=binarizer,
+                )
+                if results:
+                    obj = results[0]
+                    pos = obj.position
+                    pts = np.array([
+                        [pos.top_left.x, pos.top_left.y],
+                        [pos.top_right.x, pos.top_right.y],
+                        [pos.bottom_right.x, pos.bottom_right.y],
+                        [pos.bottom_left.x, pos.bottom_left.y],
+                    ], dtype=np.float32)
+                    return obj.text, pts, "DATAMATRIX_ZXING"
+        except Exception as e:
+            print("try_dmtx zxing error:", repr(e))
+
     return None, None, None
 
 
@@ -111,15 +154,12 @@ def _downscale(img: np.ndarray, max_w: int = DETECT_MAX_WIDTH):
 
 
 def tier0_qr_downscaled(img: np.ndarray):
-    """
-    Downscale → OpenCV QR + pyzbar.  ~5 ms.
-    Returns (data, pts_in_original_coords, type, method_tag) or Nones.
-    """
-    small, scale = _downscale(img)
-    data, pts, typ = decode_qr(small)
-    if data and pts is not None:
-        pts_orig = pts / scale if scale != 1.0 else pts
-        return data, pts_orig, typ, "tier0_qr_downscaled"
+    for max_w, tag in [(960, "960"), (1280, "1280")]:
+        small, scale = _downscale(img, max_w=max_w)
+        data, pts, typ = decode_qr(small)
+        if data and pts is not None:
+            pts_orig = pts / scale if scale != 1.0 else pts
+            return data, pts_orig, typ, f"tier0_qr_downscaled_{tag}"
     return None, None, None, None
 
 
@@ -146,7 +186,7 @@ def tier1_tiled_dmtx(gray: np.ndarray, is_over_budget):
 
     Returns (data, pts, type, method_tag) or Nones.
     """
-    if not HAS_DMTX:
+    if not HAS_DM_DECODER:
         return None, None, None, None
 
     h, w = gray.shape[:2]
